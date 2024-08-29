@@ -1,0 +1,13 @@
+{
+	"name": "@harperdb/create-component",
+	"bin": "./bin/create-component.js",
+	"scripts": {
+		"build": "esbuild src/create-component.js --bundle --platform=node --target=node20 --minify --outdir=bin"
+	},
+	"dependencies": {
+		"@inquirer/prompts": "^5.3.8"
+	},
+	"devDependencies": {
+		"esbuild": "^0.23.1"
+	}
+}
