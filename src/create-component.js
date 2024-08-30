@@ -1,27 +1,65 @@
 #!/usr/bin/env node
 
-const { input, select, Separator } = require('@inquirer/prompts');
-const fs = require('node:fs');
-const path = require('node:path');
+import { input, select, Separator } from '@inquirer/prompts';
+import fs from 'node:fs';
+import path from 'node:path';
+import ora from 'ora';
+import child_process from 'node:child_process';
 
-const templates = path.join(__dirname, '../templates')
+const templates = path.join(import.meta.dirname, '../templates')
+
+const CHOICES_MAP = {
+	'nextjs': 'Next.js',
+	'graphql-schema': 'GraphQL Schema',
+	'js-resource': 'jsResource',
+	'protocol-extension-component': 'Protocol Extension Component',
+	'resource-extension-component': 'Resource Extension Component',
+}
+
+const CHOICES_ENABLED = [];
+const CHOICES_DISABLED = [];
+
+for (const [key, value] of Object.entries(CHOICES_MAP)) {
+	if (key === 'nextjs') {
+		CHOICES_ENABLED.push({ name: value, value: key });
+	} else {
+		CHOICES_DISABLED.push({ name: value, value: key, disabled: true });
+	}
+}
 
 async function createComponent() {
 	const componentType = await select({
 		message: 'What type of component would you like to create?',
 		choices: [
-			{ name: 'Next.js', value: 'nextjs' },
+			...CHOICES_ENABLED,
 			new Separator('Coming Soon:'),
-			{ name: 'GraphQL', value: 'graphql-schema', disabled: true },
-			{ name: 'jsResource', value: 'js-resource', disabled: true },
-			{ name: 'Protocol Extension Component', value: 'protocol-extension-component', disabled: true },
-			{ name: 'Resource Extension Component', value: 'resource-extension-component', disabled: true },
+			...CHOICES_DISABLED
 		],
 	});
 
 	const directory = process.argv[2] ?? await input({ message: 'What is the component directory?'});
 
+	const spinner = ora(`Creating ${CHOICES_MAP[componentType]} component`);
+
+	spinner.start();
+
 	fs.cpSync(path.join(templates, componentType), directory, { recursive: true });
+
+	spinner.text = `Installing Dependencies`;
+
+	try {
+		const stdout = child_process.execSync('npm install', { cwd: directory });
+	} catch (error) {
+		spinner.fail('Failed to install dependencies');
+		console.error(error);
+		process.exit(1);
+	}
+
+	spinner.succeed(`Component created at ${directory}`);
+
+	console.log(`To get started, run the following commands:`);
+	console.log(`cd ${directory}`);
+	console.log(`npm run dev`);
 }
 
 createComponent().then(() => {
