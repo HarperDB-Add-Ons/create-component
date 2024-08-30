@@ -1,3 +1,7 @@
+graphqlSchema:
+  files: '*.graphql'
+jsResource:
+  files: './resources.js'
 '@harperdb/nextjs':
   package: '@harperdb/nextjs'
   files: '/*'

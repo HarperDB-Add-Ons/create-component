@@ -9,7 +9,7 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
-		"@harperdb/nextjs": "^0.0.1",
+		"@harperdb/nextjs": "^0.0.2",
 		"harperdb": "^4.3.21",
 		"next": "^14.2.7",
 		"react": "^18",

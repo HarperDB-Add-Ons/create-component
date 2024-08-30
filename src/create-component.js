@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 
-const { select, Separator } = require('@inquirer/prompts');
+const { input, select, Separator } = require('@inquirer/prompts');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const templates = path.join(__dirname, '../templates')
 
 async function createComponent() {
 	const componentType = await select({
@@ -15,7 +19,9 @@ async function createComponent() {
 		],
 	});
 
-	console.log(`Creating a ${componentType} component...`);
+	const directory = process.argv[2] ?? await input({ message: 'What is the component directory?'});
+
+	fs.cpSync(path.join(templates, componentType), directory, { recursive: true });
 }
 
 createComponent().then(() => {
