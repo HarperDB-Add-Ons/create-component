@@ -1,9 +1,29 @@
 {
 	"name": "@harperdb/create-component",
+	"version": "0.0.1",
 	"bin": "./bin/create-component.js",
+	"files": [
+		"bin",
+		"templates"
+	],
 	"scripts": {
-		"build": "esbuild src/create-component.js --bundle --platform=node --target=node20 --minify --outdir=bin"
+		"build": "esbuild src/create-component.js --bundle --platform=node --target=node20 --minify --outdir=bin",
+		"prepublishOnly": "npm run build"
 	},
+	"homepage": "https://github.com/HarperDB-Add-Ons/create-component",
+	"bugs": {
+		"url": "https://github.com/HarperDB-Add-Ons/create-component/issues",
+		"email": "support@harperdb.io"
+	},
+	"author": {
+		"name": "HarperDB",
+		"email": "support@harperdb.io"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/HarperDB-Add-Ons/create-component.git"
+	},
+	"license": "MIT",
 	"dependencies": {
 		"@inquirer/prompts": "^5.3.8"
 	},
