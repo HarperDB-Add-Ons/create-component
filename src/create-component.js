@@ -12,21 +12,20 @@ async function createComponent(controller) {
 			new Separator('Application Components:'),
 			{
 				name: 'Next.js Application Component',
-				template: path.join(templatesPath, 'nextjs'),
-				disabled: false,
+				value: path.join(templatesPath, 'nextjs'),
 			},
 			new Separator('Basic Components:'),
 			{
 				name: 'JavaScript Resource Component',
-				template: path.join(templatesPath, 'js-resource'),
+				value: path.join(templatesPath, 'js-resource'),
 			},
 			{
 				name: 'Protocol Extension Component',
-				template: path.join(templatesPath, 'protocol-extension-component'),
+				value: path.join(templatesPath, 'protocol-extension-component'),
 			},
 			{
 				name: 'Resource Extension Component',
-				template: path.join(templatesPath, 'resource-extension-component'),
+				value: path.join(templatesPath, 'resource-extension-component'),
 			},
 		],
 	}, { signal: controller.signal });
@@ -38,9 +37,15 @@ async function createComponent(controller) {
 	fs.cpSync(templatePath, directory, { recursive: true });
 
 	try {
-		const stdout = child_process.execSync('npm install', { cwd: directory });
+		const componentPackageJson = JSON.parse(fs.readFileSync(path.join(directory, 'package.json'), 'utf8'));
+		if (componentPackageJson.dependencies || componentPackageJson.devDependencies) {
+			console.log(`Installing dependencies...`);
+			const stdout = child_process.execSync('npm install', { cwd: directory, stdio: 'ignore' });
+		}
 	} catch (error) {
-		console.error(error);
+		if (error instanceof Error) {
+			console.error(error.message);
+		}
 		process.exit(1);
 	}
 
