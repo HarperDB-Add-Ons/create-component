@@ -1,7 +1,9 @@
 {
 	"name": "@harperdb/create-component",
 	"version": "0.0.1",
-	"bin": "./bin/index.js",
+	"bin": {
+		"create-component": "bin/index.js"
+	},
 	"files": [
 		"bin",
 		"templates"
