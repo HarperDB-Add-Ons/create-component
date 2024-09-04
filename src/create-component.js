@@ -50,9 +50,6 @@ async function createComponent(controller) {
 	}
 
 	console.log('Component created successfully!');
-	console.log(`To get started, run the following commands:`);
-	console.log(`cd ${directory}`);
-	console.log(`npm run dev`);
 }
 
 module.exports = {
