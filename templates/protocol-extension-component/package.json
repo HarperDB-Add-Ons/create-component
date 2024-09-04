@@ -1,3 +1,9 @@
 {
-	"name": "harperdb-protocol-extension-component"
+	"name": "harperdb-protocol-extension-component-template",
+	"version": "0.1.0",
+	"private": true,
+	"files": [
+		"config.yaml",
+		"extension.js"
+	]
 }

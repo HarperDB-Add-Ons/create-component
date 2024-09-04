@@ -1,3 +1,5 @@
+// In this JS Resource, access any of the HDB Globals to get started https://docs.harperdb.io/docs/technical-details/reference/globals
+
 const dogs = [
 	{ id: "0", name: "Lincoln", breed: "Shepherd Mix" },
 	{ id: "1", name: "Buddy", breed: "Dalmatian" },

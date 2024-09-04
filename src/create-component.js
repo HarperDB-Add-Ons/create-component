@@ -1,70 +1,55 @@
-#!/usr/bin/env node
+const { input, select, Separator } = require('@inquirer/prompts');
+const fs = require('node:fs');
+const path = require('node:path');
+const child_process = require('node:child_process');
 
-import { input, select, Separator } from '@inquirer/prompts';
-import fs from 'node:fs';
-import path from 'node:path';
-import ora from 'ora';
-import child_process from 'node:child_process';
+const templatesPath = path.join(__dirname, '../templates');
 
-const templates = path.join(import.meta.dirname, '../templates')
-
-const CHOICES_MAP = {
-	'nextjs': 'Next.js',
-	'graphql-schema': 'GraphQL Schema',
-	'js-resource': 'jsResource',
-	'protocol-extension-component': 'Protocol Extension Component',
-	'resource-extension-component': 'Resource Extension Component',
-}
-
-const CHOICES_ENABLED = [];
-const CHOICES_DISABLED = [];
-
-for (const [key, value] of Object.entries(CHOICES_MAP)) {
-	if (key === 'nextjs') {
-		CHOICES_ENABLED.push({ name: value, value: key });
-	} else {
-		CHOICES_DISABLED.push({ name: value, value: key, disabled: true });
-	}
-}
-
-async function createComponent() {
-	const componentType = await select({
+async function createComponent(controller) {
+	const templatePath = await select({
 		message: 'What type of component would you like to create?',
 		choices: [
-			...CHOICES_ENABLED,
-			new Separator('Coming Soon:'),
-			...CHOICES_DISABLED
+			new Separator('Application Components:'),
+			{
+				name: 'Next.js Application Component',
+				template: path.join(templatesPath, 'nextjs'),
+				disabled: false,
+			},
+			new Separator('Basic Components:'),
+			{
+				name: 'JavaScript Resource Component',
+				template: path.join(templatesPath, 'js-resource'),
+			},
+			{
+				name: 'Protocol Extension Component',
+				template: path.join(templatesPath, 'protocol-extension-component'),
+			},
+			{
+				name: 'Resource Extension Component',
+				template: path.join(templatesPath, 'resource-extension-component'),
+			},
 		],
-	});
+	}, { signal: controller.signal });
 
-	const directory = process.argv[2] ?? await input({ message: 'What is the component directory?'});
+	const directory = process.argv[2] ?? await input({ message: 'What is the component directory?'}, { signal: controller.signal });
 
-	const spinner = ora(`Creating ${CHOICES_MAP[componentType]} component`);
+	console.log(`Creating component in ${directory}...`);
 
-	spinner.start();
-
-	fs.cpSync(path.join(templates, componentType), directory, { recursive: true });
-
-	spinner.text = `Installing Dependencies`;
+	fs.cpSync(templatePath, directory, { recursive: true });
 
 	try {
 		const stdout = child_process.execSync('npm install', { cwd: directory });
 	} catch (error) {
-		spinner.fail('Failed to install dependencies');
 		console.error(error);
 		process.exit(1);
 	}
 
-	spinner.succeed(`Component created at ${directory}`);
-
+	console.log('Component created successfully!');
 	console.log(`To get started, run the following commands:`);
 	console.log(`cd ${directory}`);
 	console.log(`npm run dev`);
 }
 
-createComponent().then(() => {
-	process.exit(0);
-}).catch((error) => {
-	console.error(error);
-	process.exit(1);
-});
+module.exports = {
+	createComponent
+}
