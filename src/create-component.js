@@ -36,17 +36,15 @@ async function createComponent(controller) {
 
 	fs.cpSync(templatePath, directory, { recursive: true });
 
-	try {
-		const componentPackageJson = JSON.parse(fs.readFileSync(path.join(directory, 'package.json'), 'utf8'));
-		if (componentPackageJson.dependencies || componentPackageJson.devDependencies) {
-			console.log(`Installing dependencies...`);
-			const stdout = child_process.execSync('npm install', { cwd: directory, stdio: 'ignore' });
-		}
-	} catch (error) {
-		if (error instanceof Error) {
-			console.error(error.message);
-		}
-		process.exit(1);
+	const componentPackageJSONPath = path.join(directory, 'package.json');
+	const componentPackageJson = JSON.parse(fs.readFileSync(componentPackageJSONPath, 'utf8'));
+
+	componentPackageJson.name = path.basename(directory);
+	fs.writeFileSync(componentPackageJSONPath, JSON.stringify(componentPackageJson, null, 2));
+
+	if (componentPackageJson.dependencies || componentPackageJson.devDependencies) {
+		console.log(`Installing dependencies...`);
+		child_process.execSync('npm install', { cwd: directory, stdio: 'ignore' });
 	}
 
 	console.log('Component created successfully!');
