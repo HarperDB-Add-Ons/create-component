@@ -15,7 +15,7 @@ const { values } = util.parseArgs({
 			default: false,
 		},
 	},
-	allowPositionals: true
+	allowPositionals: true,
 });
 
 if (values.version) {
@@ -41,11 +41,13 @@ process.on('beforeExit', () => {
 	controller.abort();
 });
 
-createComponent(controller).then(() => {
-	process.exit(0);
-}).catch((error) => {
-	if (error instanceof Error) {
-		console.error(error.message);
-	}
-	process.exit(1);
-});
+createComponent(controller)
+	.then(() => {
+		process.exit(0);
+	})
+	.catch((error) => {
+		if (error instanceof Error) {
+			console.error(error.message);
+		}
+		process.exit(1);
+	});

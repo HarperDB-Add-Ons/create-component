@@ -10,7 +10,8 @@
 	],
 	"scripts": {
 		"build": "esbuild src/index.js --bundle --minify --platform=node --target=node20 --outdir=bin",
-		"prepublishOnly": "npm run build"
+		"prepublishOnly": "npm run build",
+		"format": "prettier --write ."
 	},
 	"homepage": "https://github.com/HarperDB-Add-Ons/create-component",
 	"bugs": {
@@ -30,6 +31,9 @@
 		"@inquirer/prompts": "5.4.0"
 	},
 	"devDependencies": {
-		"esbuild": "0.23.1"
-	}
+		"@harperdb/code-guidelines": "^0.0.2",
+		"esbuild": "0.23.1",
+		"prettier": "^3.3.3"
+	},
+	"prettier": "@harperdb/code-guidelines/prettier"
 }
